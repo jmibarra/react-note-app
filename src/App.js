@@ -1,34 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { nanoid } from 'nanoid';
 import NoteList from './components/NoteList'
 import Search from './components/Search'
+import Header from './components/Header'
 
 const App = () => {
 
-    const [notes, setNotes] = useState([
-		{
-			id: nanoid(),
-			text: 'This is my first note!',
-			date: '15/04/2021',
-		},
-		{
-			id: nanoid(),
-			text: 'This is my second note!',
-			date: '21/04/2021',
-		},
-		{
-			id: nanoid(),
-			text: 'This is my third note!',
-			date: '28/04/2021',
-		},
-		{
-			id: nanoid(),
-			text: 'This is my new note!',
-			date: '30/04/2021',
-		},
-	]);
+    const [notes, setNotes] = useState([]);
 
     const [searchText, setSeachText] = useState('');
+    const [darkMode, setdarkMode] = useState(false);
+
+    useEffect(() => {
+        const savedNotes = JSON.parse(
+            localStorage.getItem('react-notes-app-data')
+        );
+
+        if(savedNotes){
+            setNotes(savedNotes);
+        }
+    }, []) //No tiene target entonces solo se actualizará al crear
+    
+    useEffect(() => {
+        localStorage.setItem(
+            'react-notes-app-data', 
+            JSON.stringify(notes)
+        )
+    }, [notes]) //Actualiza cada vez que actualizamos el state notes
+    
 
     const addNote = (text) => {
         const date = new Date();
@@ -49,17 +48,19 @@ const App = () => {
 
     }
 
-
     return (
-        <div className='container'>
-            <Search handleSearchNote={setSeachText}/>
-            <NoteList 
-                notes={
-                    notes.filter((note) => note.text.toLowerCase().includes(searchText.toLowerCase()))
-                } 
-                handleAddNote={addNote}
-                handleDeleteNote={deleteNote}
-            />
+        <div className={`${darkMode && 'dark-mode'}`}>
+            <div className='container'>
+                <Header handleToggleMode ={setdarkMode}/>
+                <Search handleSearchNote={setSeachText}/>
+                <NoteList 
+                    notes={
+                        notes.filter((note) => note.text.toLowerCase().includes(searchText.toLowerCase()))
+                    } 
+                    handleAddNote={addNote}
+                    handleDeleteNote={deleteNote}
+                />
+            </div>
         </div>
     )
 }
