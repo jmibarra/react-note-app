@@ -3,9 +3,6 @@ import Note from './Note'
 
 
 const NoteList = ({ notes, handleAddNote, handleDeleteNote }) => {
-
-    
-
     return (
         <div className='notes-list'>
             {notes.map((note)=>
@@ -13,6 +10,7 @@ const NoteList = ({ notes, handleAddNote, handleDeleteNote }) => {
                     id={note.id} 
                     text={note.text} 
                     date={note.date} 
+                    tags={note.tags}
                     handleDeleteNote={handleDeleteNote}
                 />
             )}
